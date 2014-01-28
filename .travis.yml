@@ -1,0 +1,19 @@
+env:
+  global:
+    - secure: eq3RcRTNUrZX6qWnGzQoG7GeqzxnmHyn3h4Z+Wqx8Z6HzufRRTc8Gc8LC8hLmbUY8mcMwEohJdhX+AsPtpQjx4LO4P+5CJrncEXMN41ipET7CWFt9b00WG2UnZhNrUl7inj0Y5j0owfM6v/Zc9VrRzNjPkJuIDrQFywpp99/ieY=
+    - secure: clEiGWLOhkXPnNl7GIh8CKhNMPHLdo1s7dKk6B5Ld0VI3jQwrqFaQs1QRkQ8haTMi/1ks1ojT0bYVoAftvUpPqJuOW5SZ6dJroeoNsL8v31RQXfHaFhpE5vt6B7Xr7VJmBAbtwnyVW4TiwwhND7cpHaIECmJB6VqpDtXOWPmMas=
+before_install:
+  - yes | sudo add-apt-repository ppa:hansjorg/rust
+  - sudo apt-get update
+install:
+  - sudo apt-get install rust-nightly
+  - git clone https://github.com/chris-morgan/rust-http.git
+  - cd rust-http
+  - make
+  - cd ..
+  - mv rust-http ../
+script:
+  - make check
+  - make docs
+after_script:
+  - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
