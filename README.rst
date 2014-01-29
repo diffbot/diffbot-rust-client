@@ -43,6 +43,14 @@ Usage
 Please see the project documentation at
 http://www.rust-ci.org/chris-morgan/diffbot-rust-client/doc/diffbot/.
 
+License
+-------
+
+This library is distributed under similar terms to Rust: dual licensed under
+the MIT license and the Apache license (version 2.0).
+
+See LICENSE-APACHE, LICENSE-MIT, and COPYRIGHT for details.
+
 .. _Diffbot: http://diffbot.com/
 .. _Rust: http://www.rust-lang.org/
 .. _rust-http: https://gihub.com/chris-morgan/rust-http
