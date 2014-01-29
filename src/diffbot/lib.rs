@@ -131,25 +131,6 @@ impl Diffbot {
     }
 }
 
-// Handy wrapper methods for specific diffbot APIs
-impl Diffbot {
-    /// Call the Diffbot Analyze API.
-    ///
-    /// See the ``call()`` function for an explanation of the parameters.
-    pub fn analyze(&self, url: &Url, fields: &[&str])
-                  -> Result<json::Object, Error> {
-        self.call(url, "analyze", fields)
-    }
-
-    /// Call the Diffbot Article API.
-    ///
-    /// See the ``call()`` function for an explanation of the parameters.
-    pub fn article(&self, url: &Url, fields: &[&str])
-                  -> Result<json::Object, Error> {
-        self.call(url, "article", fields)
-    }
-}
-
 /// An in-progress Diffbot API call.
 pub struct Request {
     priv request: RequestWriter<TcpStream>,
