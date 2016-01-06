@@ -11,9 +11,12 @@
 //! fn main() {
 //!     let client = Diffbot::v3("insert_your_token_here");
 //!     match client.call(API::Analyze, "http://www.diffbot.com") {
-//!         Ok(result) => println!("{:?}", result),
-//!         Err(Error::Api(code, msg)) => println!("API returned error {}: {}", code, msg),
-//!         Err(err) => println!("Other error: {:?}", err),
+//!         Ok(result) =>
+//!             println!("{:?}", result),
+//!         Err(Error::Api(code, msg)) =>
+//!             println!("API returned error {}: {}", code, msg),
+//!         Err(err) =>
+//!             println!("Other error: {:?}", err),
 //!     };
 //! }
 //! ```
@@ -365,8 +368,9 @@ fn test_search() {
 #[test]
 fn test_search_with_options() {
     let diffbot = Diffbot::v3("insert_your_token_here");
-    println!("{:?}", diffbot.search_with_options("GLOBAL-INDEX", "diffbot",
-                                                 &[("num", "20")]));
+    println!("{:?}", diffbot.search_with_options("GLOBAL-INDEX",
+                                                 "site:techcrunch.com sortby:date",
+                                                 &[("num", "2")]));
 }
 
 #[test]
