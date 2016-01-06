@@ -1,5 +1,9 @@
 [package]
 authors = ["Alexandre Bury <alexandre.bury@gmail.com>"]
+description = "A client library for the Diffbot API"
+keywords = ["diffbot", "web scraping", "api"]
+license = "MIT"
+readme = "Readme.md"
 name = "diffbot"
 version = "0.1.0"
 
