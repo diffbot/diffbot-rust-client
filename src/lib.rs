@@ -239,8 +239,8 @@ impl Diffbot {
     ///
     /// See `call_with_options` for information on the arguments.
     ///
-    /// `target_url` here is the URL the page would have. It doesn't have to be accessible, but
-    /// will be used when resolving links.
+    /// `target_url` here is the URL the page would have.
+    /// It doesn't have to be accessible, but will be used when resolving links.
     pub fn post_body_with_options<S: ToString>(&self,
                                                api: API, target_url: &str,
                                                body: &[u8],
@@ -251,6 +251,40 @@ impl Diffbot {
         let builder = self.client.post(url).body(body).header(header);
         Diffbot::process_request(builder)
     }
+
+    /// Run a search in a diffbot collection without extra options.
+    ///
+    /// Use `col` = `GLOBAL-INDEX` for the global search collection.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # extern crate diffbot;
+    /// # use diffbot::*;
+    /// # fn main() {
+    /// # let diffbot = Diffbot::v3("token");
+    /// # println!("{:?}",
+    /// diffbot.search("GLOBAL-INDEX", "diffbot")
+    /// # );
+    /// # }
+    /// ```
+    pub fn search(&self, col: &str, query: &str) -> DiffbotResult {
+        self.search_with_options::<String>(col, query, &[])
+    }
+
+    /// Run a search in a diffbot collection.
+    ///
+    /// Use `col` = `GLOBAL-INDEX` for the global search collection.
+    pub fn search_with_options<S: ToString>(&self,
+                                            col: &str, query: &str,
+                                            options: &[(S,S)]) -> DiffbotResult {
+        let url = self.prepare_search_url(col, query, options);
+
+        let builder = self.client.get(url);
+        Diffbot::process_request(builder)
+    }
+
+    // TODO: add crawlbot API
 
     // Process a request and analyze the result
     fn process_request(builder: hyper::client::RequestBuilder) -> DiffbotResult {
@@ -272,6 +306,25 @@ impl Diffbot {
         Ok(json_result)
     }
 
+    fn prepare_search_url<S: ToString>(&self,
+                                       col: &str, query: &str,
+                                       options: &[(S,S)]) -> hyper::Url {
+        let mut params = Vec::<(String,String)>::new();
+        params.push(("token".to_string(), self.token.clone()));
+        params.push(("version".to_string(), self.version.to_string()));
+        params.push(("col".to_string(), col.to_string()));
+        params.push(("query".to_string(), query.to_string()));
+        for &(ref key, ref value) in options.iter() {
+            params.push((key.to_string(), value.to_string()));
+        }
+
+        // We control the URL, it should always be valid.
+        let mut url = hyper::Url::parse("https://diffbot.com/api/search").unwrap();
+        url.set_query_from_pairs(&params);
+
+        url
+    }
+
     // Returns the diffbot URL for the given call
     fn prepare_url<S: ToString>(&self,
                                 api: API, target_url: &str,
@@ -291,6 +344,18 @@ impl Diffbot {
 
         url
     }
+}
+
+#[test]
+fn test_search() {
+    let diffbot = Diffbot::v3("insert_your_token_here");
+    println!("{:?}", diffbot.search("GLOBAL-INDEX", "diffbot"));
+}
+
+#[test]
+fn test_search_with_options() {
+    let diffbot = Diffbot::v3("insert_your_token_here");
+    println!("{:?}", diffbot.search_with_options("GLOBAL-INDEX", "diffbot", &[("num","20")]));
 }
 
 #[test]
