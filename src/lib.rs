@@ -1,6 +1,22 @@
 //! This library provides an API client for [Diffbot](https://www.diffbot.com)
 //!
 //! See also [the diffbot documentation](https://www.diffbot.com/dev/docs/).
+//!
+//! # Example
+//!
+//! ```
+//! extern crate diffbot;
+//! use diffbot::*;
+//!
+//! fn main() {
+//!     let client = Diffbot::v3("insert_your_token_here");
+//!     match client.call(API::Analyze, "http://www.diffbot.com") {
+//!         Ok(result) => println!("{:?}", result),
+//!         Err(Error::Api(code, msg)) => println!("API returned error {}: {}", code, msg),
+//!         Err(err) => println!("Other error: {:?}", err),
+//!     };
+//! }
+//! ```
 
 extern crate url;
 extern crate hyper;
@@ -9,7 +25,10 @@ extern crate rustc_serialize;
 use hyper::header::ContentType;
 use hyper::mime::{Mime,TopLevel,SubLevel};
 
+use std::error::{self, Error as StdError};
 use std::io;
+use std::fmt;
+
 
 use rustc_serialize::json;
 
@@ -33,13 +52,21 @@ pub struct Diffbot {
     client: hyper::Client,
 }
 
-/// One of the possible diffbot API
+/// One of the possible diffbot API.
+///
+/// See [the diffbot documentation](https://www.diffbot.com/dev/docs/).
 pub enum API {
+    /// The analyze API automatically detects the page type.
     Analyze,
+    /// The article API for news article.
     Article,
+    /// The product API for products in online shops.
     Product,
+    /// The discussion API for forums.
     Discussion,
+    /// The image API for image-central pages.
     Image,
+    /// The video API for video pages (youtube, ...).
     Video,
 }
 
@@ -63,10 +90,14 @@ impl API {
 /// Error occuring during a call.
 #[derive(Debug)]
 pub enum Error {
+    /// The API returned an error.
     Api(u32,String),
+    /// An error occured when decoding JSON from the API.
     Json,
+    /// An error occured with the network.
     Io(io::Error),
     // TODO: don't expose hyper
+    /// An HTTP error occured with the webserver.
     Http(hyper::Error),
 }
 
@@ -82,6 +113,32 @@ impl From<json::ParserError> for Error {
 impl From<hyper::Error> for Error {
     fn from(err: hyper::Error) -> Self {
         Error::Http(err)
+    }
+}
+
+impl error::Error for Error {
+    fn description(&self) -> &str {
+        match self {
+            &Error::Api(_, ref msg) => msg,
+            &Error::Json => "invalid JSON",
+            &Error::Io(ref err) => err.description(),
+            &Error::Http(ref err) => err.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        match self {
+            &Error::Api(_,_) => None,
+            &Error::Json => None,
+            &Error::Io(ref err) => Some(err),
+            &Error::Http(ref err) => Some(err),
+        }
+    }
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fmt.write_str(self.description())
     }
 }
 
