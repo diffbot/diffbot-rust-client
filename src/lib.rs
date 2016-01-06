@@ -23,7 +23,7 @@ extern crate hyper;
 extern crate rustc_serialize;
 
 use hyper::header::ContentType;
-use hyper::mime::{Mime,TopLevel,SubLevel};
+use hyper::mime::{Mime, TopLevel, SubLevel};
 
 use std::error::{self, Error as StdError};
 use std::io;
@@ -91,7 +91,7 @@ impl API {
 #[derive(Debug)]
 pub enum Error {
     /// The API returned an error.
-    Api(u32,String),
+    Api(u32, String),
     /// An error occured when decoding JSON from the API.
     Json,
     /// An error occured with the network.
@@ -104,7 +104,7 @@ pub enum Error {
 impl From<json::ParserError> for Error {
     fn from(err: json::ParserError) -> Self {
         match err {
-            json::ParserError::SyntaxError(_,_,_) => Error::Json,
+            json::ParserError::SyntaxError(_, _, _) => Error::Json,
             json::ParserError::IoError(err) => Error::Io(err),
         }
     }
@@ -128,7 +128,7 @@ impl error::Error for Error {
 
     fn cause(&self) -> Option<&error::Error> {
         match self {
-            &Error::Api(_,_) => None,
+            &Error::Api(_, _) => None,
             &Error::Json => None,
             &Error::Io(ref err) => Some(err),
             &Error::Http(ref err) => Some(err),
@@ -201,8 +201,10 @@ impl Diffbot {
     /// # }
     /// ```
     pub fn call_with_options<S: ToString>(&self,
-                                          api: API, target_url: &str,
-                                          options: &[(S,S)]) -> DiffbotResult {
+                                          api: API,
+                                          target_url: &str,
+                                          options: &[(S, S)])
+                                          -> DiffbotResult {
         let url = self.prepare_url(api, target_url, options);
 
         let builder = self.client.get(url);
@@ -213,8 +215,8 @@ impl Diffbot {
     ///
     /// See `call_with_options` for information on the arguments.
     ///
-    /// `target_url` here is the URL the page would have. It doesn't have to be accessible, but
-    /// will be used when resolving links.
+    /// `target_url` here is the URL the page would have.
+    /// It doesn't have to be accessible, but will be used when resolving links.
     ///
     /// # Example
     ///
@@ -242,9 +244,11 @@ impl Diffbot {
     /// `target_url` here is the URL the page would have.
     /// It doesn't have to be accessible, but will be used when resolving links.
     pub fn post_body_with_options<S: ToString>(&self,
-                                               api: API, target_url: &str,
+                                               api: API,
+                                               target_url: &str,
                                                body: &[u8],
-                                               options: &[(S,S)]) -> DiffbotResult {
+                                               options: &[(S, S)])
+                                               -> DiffbotResult {
         let url = self.prepare_url(api, target_url, options);
 
         let header = ContentType(Mime(TopLevel::Text, SubLevel::Html, vec![]));
@@ -276,8 +280,10 @@ impl Diffbot {
     ///
     /// Use `col` = `GLOBAL-INDEX` for the global search collection.
     pub fn search_with_options<S: ToString>(&self,
-                                            col: &str, query: &str,
-                                            options: &[(S,S)]) -> DiffbotResult {
+                                            col: &str,
+                                            query: &str,
+                                            options: &[(S, S)])
+                                            -> DiffbotResult {
         let url = self.prepare_search_url(col, query, options);
 
         let builder = self.client.get(url);
@@ -297,8 +303,8 @@ impl Diffbot {
 
         if json_result.contains_key("error") {
             let error_code = json_result.get("errorCode")
-                .and_then(|c| c.as_u64())
-                .unwrap_or(0u64);
+                                        .and_then(|c| c.as_u64())
+                                        .unwrap_or(0u64);
             let error = json_result["error"].as_string().unwrap_or("");
             return Err(Error::Api(error_code as u32, error.to_string()));
         }
@@ -307,9 +313,11 @@ impl Diffbot {
     }
 
     fn prepare_search_url<S: ToString>(&self,
-                                       col: &str, query: &str,
-                                       options: &[(S,S)]) -> hyper::Url {
-        let mut params = Vec::<(String,String)>::new();
+                                       col: &str,
+                                       query: &str,
+                                       options: &[(S, S)])
+                                       -> hyper::Url {
+        let mut params = Vec::<(String, String)>::new();
         params.push(("token".to_string(), self.token.clone()));
         params.push(("version".to_string(), self.version.to_string()));
         params.push(("col".to_string(), col.to_string()));
@@ -327,10 +335,12 @@ impl Diffbot {
 
     // Returns the diffbot URL for the given call
     fn prepare_url<S: ToString>(&self,
-                                api: API, target_url: &str,
-                                options: &[(S,S)]) -> hyper::Url {
+                                api: API,
+                                target_url: &str,
+                                options: &[(S, S)])
+                                -> hyper::Url {
 
-        let mut params = Vec::<(String,String)>::new();
+        let mut params = Vec::<(String, String)>::new();
         params.push(("token".to_string(), self.token.clone()));
         params.push(("version".to_string(), self.version.to_string()));
         params.push(("url".to_string(), target_url.to_string()));
@@ -355,7 +365,8 @@ fn test_search() {
 #[test]
 fn test_search_with_options() {
     let diffbot = Diffbot::v3("insert_your_token_here");
-    println!("{:?}", diffbot.search_with_options("GLOBAL-INDEX", "diffbot", &[("num","20")]));
+    println!("{:?}", diffbot.search_with_options("GLOBAL-INDEX", "diffbot",
+                                                 &[("num", "20")]));
 }
 
 #[test]
@@ -378,7 +389,9 @@ fn test_call_with_options() {
 fn test_post() {
     // Use `cargo test -- --nocapture` to see the output
     let diffbot = Diffbot::v3("insert_your_token_here");
-    let res = diffbot.post_body(API::Article, "http://my.website.com", br#"
+    let res = diffbot.post_body(API::Article,
+                                "http://my.website.com",
+                                br#"
 <html>
     <head>
         <title>My Website</title>
