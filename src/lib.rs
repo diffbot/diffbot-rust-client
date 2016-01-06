@@ -6,6 +6,9 @@ extern crate url;
 extern crate hyper;
 extern crate rustc_serialize;
 
+use hyper::header::ContentType;
+use hyper::mime::{Mime,TopLevel,SubLevel};
+
 use std::io;
 
 use rustc_serialize::json;
@@ -26,6 +29,8 @@ use rustc_serialize::json;
 pub struct Diffbot {
     token: String,
     version: u32,
+
+    client: hyper::Client,
 }
 
 /// One of the possible diffbot API
@@ -61,6 +66,7 @@ pub enum Error {
     Api(u32,String),
     Json,
     Io(io::Error),
+    // TODO: don't expose hyper
     Http(hyper::Error),
 }
 
@@ -90,6 +96,7 @@ impl Diffbot {
         Diffbot {
             token: token.to_string(),
             version: version,
+            client: hyper::Client::new(),
         }
     }
 
@@ -109,14 +116,18 @@ impl Diffbot {
     }
 
     /// Makes an API call without extra options.
-    pub fn call(&self, api: API, url: &str) -> DiffbotResult {
-        call(&self.token, self.version, api, url)
+    ///
+    /// Just calls `call_with_options` with an empty option list.
+    pub fn call(&self, api: API, target_url: &str) -> DiffbotResult {
+        self.call_with_options::<String>(api, target_url, &[])
     }
 
     /// Makes an API call
     ///
+    /// Runs `target_url` through the diffbot endpoint specified by `api`.
     /// Add each (key,value) pair in `options` to the query string.
-    /// Read the [diffbot documentation](https://www.diffbot.com/dev/docs/) for information on supported values.
+    /// Read the [diffbot documentation](https://www.diffbot.com/dev/docs/)
+    /// for information on supported values.
     ///
     /// # Example
     ///
@@ -132,69 +143,130 @@ impl Diffbot {
     /// # );
     /// # }
     /// ```
-    pub fn call_with_options<S: ToString>(&self, api: API, url: &str, options: &[(S,S)]) -> DiffbotResult {
-        call_with_options(&self.token, self.version, api, url, options)
-    }
-}
+    pub fn call_with_options<S: ToString>(&self,
+                                          api: API, target_url: &str,
+                                          options: &[(S,S)]) -> DiffbotResult {
+        let url = self.prepare_url(api, target_url, options);
 
-/// Makes an API call without extra options.
-///
-/// Just calls `call_with_options` with an empty option list.
-pub fn call(token: &str, version: u32, api: API, target_url: &str) -> DiffbotResult {
-    call_with_options::<String>(token, version, api, target_url, &[])
-}
-
-/// Makes an API call.
-///
-/// Runs `target_url` through the diffbot endpoint specified by `api`.
-/// Adds every (key,value) pair from `options` to the query string.
-pub fn call_with_options<S: ToString>(token: &str, version: u32, api: API, target_url: &str, options: &[(S,S)]) -> DiffbotResult {
-    let mut params = Vec::<(String,String)>::new();
-    params.push(("token".to_string(), token.to_string()));
-    params.push(("version".to_string(), version.to_string()));
-    params.push(("url".to_string(), target_url.to_string()));
-    for &(ref key, ref value) in options.iter() {
-        params.push((key.to_string(), value.to_string()));
+        let builder = self.client.get(url);
+        Diffbot::process_request(builder)
     }
 
-    let client = hyper::Client::new();
-
-    // We control the URL, it should always be valid.
-    let mut url = hyper::Url::parse(&api.get_url()).unwrap();
-    url.set_query_from_pairs(&params);
-
-    println!("{}", url);
-
-    let builder = client.get(url);
-    let mut result = try!(builder.send());
-
-    let json_result = match try!(json::Json::from_reader(&mut result)) {
-        json::Json::Object(obj) => obj,
-        _ => return Err(Error::Json),
-    };
-
-    if json_result.contains_key("error") {
-        let error_code = json_result.get("errorCode").and_then(|c| c.as_u64()).unwrap_or(0u64) as u32;
-        let error = json_result["error"].as_string().unwrap_or("");
-        return Err(Error::Api(error_code, error.to_string()));
+    /// Posti an entire html body to the API, without extra options.
+    ///
+    /// See `call_with_options` for information on the arguments.
+    ///
+    /// `target_url` here is the URL the page would have. It doesn't have to be accessible, but
+    /// will be used when resolving links.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # extern crate diffbot;
+    /// # use diffbot::*;
+    /// # fn main() {
+    /// # let diffbot = Diffbot::v3("token");
+    /// # println!("{:?}", {
+    /// let body = b"<html>...</html>";
+    /// diffbot.post_body(API::Article,
+    ///                   "http://my.website.com",
+    ///                   body)
+    /// # } );
+    /// # }
+    /// ```
+    pub fn post_body(&self, api: API, target_url: &str, body: &[u8]) -> DiffbotResult {
+        self.post_body_with_options::<String>(api, target_url, body, &[])
     }
 
-    Ok(json_result)
+    /// Posti an entire html body to the API.
+    ///
+    /// See `call_with_options` for information on the arguments.
+    ///
+    /// `target_url` here is the URL the page would have. It doesn't have to be accessible, but
+    /// will be used when resolving links.
+    pub fn post_body_with_options<S: ToString>(&self,
+                                               api: API, target_url: &str,
+                                               body: &[u8],
+                                               options: &[(S,S)]) -> DiffbotResult {
+        let url = self.prepare_url(api, target_url, options);
+
+        let header = ContentType(Mime(TopLevel::Text, SubLevel::Html, vec![]));
+        let builder = self.client.post(url).body(body).header(header);
+        Diffbot::process_request(builder)
+    }
+
+    // Process a request and analyze the result
+    fn process_request(builder: hyper::client::RequestBuilder) -> DiffbotResult {
+        let mut result = try!(builder.send());
+
+        let json_result = match try!(json::Json::from_reader(&mut result)) {
+            json::Json::Object(obj) => obj,
+            _ => return Err(Error::Json),
+        };
+
+        if json_result.contains_key("error") {
+            let error_code = json_result.get("errorCode")
+                .and_then(|c| c.as_u64())
+                .unwrap_or(0u64);
+            let error = json_result["error"].as_string().unwrap_or("");
+            return Err(Error::Api(error_code as u32, error.to_string()));
+        }
+
+        Ok(json_result)
+    }
+
+    // Returns the diffbot URL for the given call
+    fn prepare_url<S: ToString>(&self,
+                                api: API, target_url: &str,
+                                options: &[(S,S)]) -> hyper::Url {
+
+        let mut params = Vec::<(String,String)>::new();
+        params.push(("token".to_string(), self.token.clone()));
+        params.push(("version".to_string(), self.version.to_string()));
+        params.push(("url".to_string(), target_url.to_string()));
+        for &(ref key, ref value) in options.iter() {
+            params.push((key.to_string(), value.to_string()));
+        }
+
+        // We control the URL, it should always be valid.
+        let mut url = hyper::Url::parse(&api.get_url()).unwrap();
+        url.set_query_from_pairs(&params);
+
+        url
+    }
 }
 
 #[test]
 fn test_call() {
     // Use `cargo test -- --nocapture` to see the output
-    println!("{:?}", call("insert_your_token_here", 3,
-                          API::Analyze,
-                          "http://diffbot.com"));
+    let diffbot = Diffbot::v3("insert_your_token_here");
+    println!("{:?}", diffbot.call(API::Analyze, "http://diffbot.com"));
 }
 
 #[test]
 fn test_call_with_options() {
     // Use `cargo test -- --nocapture` to see the output
-    println!("{:?}", call_with_options("insert_your_token_here", 3,
-                                       API::Analyze,
-                                       "http://diffbot.com",
-                                       &[("fields", "links,meta")]));
+    let diffbot = Diffbot::v3("insert_your_token_here");
+    println!("{:?}", diffbot.call_with_options(API::Analyze,
+                                               "http://diffbot.com",
+                                               &[("fields", "links,meta")]));
+}
+
+#[test]
+fn test_post() {
+    // Use `cargo test -- --nocapture` to see the output
+    let diffbot = Diffbot::v3("insert_your_token_here");
+    let res = diffbot.post_body(API::Article, "http://my.website.com", br#"
+<html>
+    <head>
+        <title>My Website</title>
+    </head>
+    <body>
+        <h1>My Website</h1>
+        <p>This is a fake website, yet we will analyze its content.
+           Isn't it interesting?</p>
+    </body>
+</html>"#);
+
+    println!("{:?}", res);
 }
