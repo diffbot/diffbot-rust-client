@@ -11,11 +11,11 @@ which is basically a [BTreeMap](https://doc.rust-lang.org/nightly/collections/st
 
 ## Installation
 
-Add to your `Cargo.toml`:
+Add to your `Cargo.toml` dependencies:
 
 ```
-[dependencies.diffbot]
-git = "https://github.com/diffbot/diffbot-rust-client"
+[dependencies]
+diffbot = "0.1"
 ```
 
 And to your main source file:
