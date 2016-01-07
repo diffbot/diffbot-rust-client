@@ -7,6 +7,8 @@ You still need a diffbot token (check their [trial](https://www.diffbot.com/plan
 It returns a Json object from [rustc_serialize](https://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/index.html),
 which is basically a [BTreeMap](https://doc.rust-lang.org/nightly/collections/struct.BTreeMap.html).
 
+## [Documentation](http://diffbot.github.io/diffbot-rust-client/diffbot/index.html)
+
 ## Installation
 
 Add to your `Cargo.toml`:
