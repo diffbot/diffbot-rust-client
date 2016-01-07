@@ -1,7 +1,9 @@
 [package]
 authors = ["Alexandre Bury <alexandre.bury@gmail.com>"]
+repository = "https://github.com/diffbot/diffbot-rust-client"
+documentation = "http://diffbot.github.io/diffbot-rust-client/diffbot/index.html"
 description = "A client library for the Diffbot API"
-keywords = ["diffbot", "web scraping", "api"]
+keywords = ["diffbot", "web-scraping", "api"]
 license = "MIT"
 readme = "Readme.md"
 name = "diffbot"
