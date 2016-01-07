@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["API","One of the possible diffbot API."],["Error","Error occuring during a call."]],"struct":[["Diffbot","Diffbot API client."]],"type":[["DiffbotResult","Result from a call."]]});

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Diffbot` struct in crate `diffbot`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Diffbot">
+
+    <title>diffbot::Diffbot - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>diffbot</a></p><script>window.sidebarCurrent = {name: 'Diffbot', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>diffbot</a>::<wbr><a class='struct' href=''>Diffbot</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-13' class='srclink' href='../src/diffbot/lib.rs.html#51-56' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Diffbot {
+    // some fields omitted
+}</pre><div class='docblock'><p>Diffbot API client.</p>
+
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1><pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>diffbot</span> <span class='op'>=</span> <span class='ident'>Diffbot</span>::<span class='ident'>v3</span>(<span class='string'>&quot;token&quot;</span>);
+<span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>diffbot</span>.<span class='ident'>call</span>(<span class='ident'>API</span>::<span class='ident'>Analyze</span>, <span class='string'>&quot;http://diffbot.com&quot;</span>);</pre>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../diffbot/struct.Diffbot.html' title='diffbot::Diffbot'>Diffbot</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(token: S, version: <a href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>) -&gt; Self</code></h4>
+<div class='docblock'><p>Returns a Diffbot client that uses the given token and version.</p>
+
+<p>Valid versions: <code>1</code>, <code>2</code>, <code>3</code>.</p>
+</div><h4 id='method.v1' class='method'><code>fn <a href='#method.v1' class='fnname'>v1</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(token: S) -&gt; Self</code></h4>
+<div class='docblock'><p>Convenient method to use a v1 client.</p>
+</div><h4 id='method.v2' class='method'><code>fn <a href='#method.v2' class='fnname'>v2</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(token: S) -&gt; Self</code></h4>
+<div class='docblock'><p>Convenient method to use a v2 client.</p>
+</div><h4 id='method.v3' class='method'><code>fn <a href='#method.v3' class='fnname'>v3</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(token: S) -&gt; Self</code></h4>
+<div class='docblock'><p>Convenient method to use a v3 client (recommended).</p>
+</div><h4 id='method.call' class='method'><code>fn <a href='#method.call' class='fnname'>call</a>(&amp;self, api: <a class='enum' href='../diffbot/enum.API.html' title='diffbot::API'>API</a>, target_url: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../diffbot/type.DiffbotResult.html' title='diffbot::DiffbotResult'>DiffbotResult</a></code></h4>
+<div class='docblock'><p>Makes an API call without extra options.</p>
+
+<p>Just calls <code>call_with_options</code> with an empty option list.</p>
+</div><h4 id='method.call_with_options' class='method'><code>fn <a href='#method.call_with_options' class='fnname'>call_with_options</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(&amp;self, api: <a class='enum' href='../diffbot/enum.API.html' title='diffbot::API'>API</a>, target_url: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, options: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(S, S)</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='../diffbot/type.DiffbotResult.html' title='diffbot::DiffbotResult'>DiffbotResult</a></code></h4>
+<div class='docblock'><p>Makes an API call</p>
+
+<p>Runs <code>target_url</code> through the diffbot endpoint specified by <code>api</code>.
+Add each (key,value) pair in <code>options</code> to the query string.
+Read the <a href="https://www.diffbot.com/dev/docs/">diffbot documentation</a>
+for information on supported values.</p>
+
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1><pre class='rust rust-example-rendered'>
+<span class='ident'>diffbot</span>.<span class='ident'>call_with_options</span>(<span class='ident'>API</span>::<span class='ident'>Article</span>,
+                          <span class='string'>&quot;http://diffbot.com&quot;</span>,
+                          <span class='kw-2'>&amp;</span>[(<span class='string'>&quot;paging&quot;</span>, <span class='string'>&quot;false&quot;</span>)])</pre>
+</div><h4 id='method.post_body' class='method'><code>fn <a href='#method.post_body' class='fnname'>post_body</a>(&amp;self, api: <a class='enum' href='../diffbot/enum.API.html' title='diffbot::API'>API</a>, target_url: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, body: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='../diffbot/type.DiffbotResult.html' title='diffbot::DiffbotResult'>DiffbotResult</a></code></h4>
+<div class='docblock'><p>Posti an entire html body to the API, without extra options.</p>
+
+<p>See <code>call_with_options</code> for information on the arguments.</p>
+
+<p><code>target_url</code> here is the URL the page would have.
+It doesn&#39;t have to be accessible, but will be used when resolving links.</p>
+
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1><pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>body</span> <span class='op'>=</span> <span class='string'>b&quot;&lt;html&gt;...&lt;/html&gt;&quot;</span>;
+<span class='ident'>diffbot</span>.<span class='ident'>post_body</span>(<span class='ident'>API</span>::<span class='ident'>Article</span>,
+                  <span class='string'>&quot;http://my.website.com&quot;</span>,
+                  <span class='ident'>body</span>)</pre>
+</div><h4 id='method.post_body_with_options' class='method'><code>fn <a href='#method.post_body_with_options' class='fnname'>post_body_with_options</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(&amp;self, api: <a class='enum' href='../diffbot/enum.API.html' title='diffbot::API'>API</a>, target_url: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, body: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, options: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(S, S)</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='../diffbot/type.DiffbotResult.html' title='diffbot::DiffbotResult'>DiffbotResult</a></code></h4>
+<div class='docblock'><p>Posti an entire html body to the API.</p>
+
+<p>See <code>call_with_options</code> for information on the arguments.</p>
+
+<p><code>target_url</code> here is the URL the page would have.
+It doesn&#39;t have to be accessible, but will be used when resolving links.</p>
+</div><h4 id='method.search' class='method'><code>fn <a href='#method.search' class='fnname'>search</a>(&amp;self, col: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, query: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../diffbot/type.DiffbotResult.html' title='diffbot::DiffbotResult'>DiffbotResult</a></code></h4>
+<div class='docblock'><p>Run a search in a diffbot collection without extra options.</p>
+
+<p>Use <code>col</code> = <code>GLOBAL-INDEX</code> for the global search collection.</p>
+
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1><pre class='rust rust-example-rendered'>
+<span class='ident'>diffbot</span>.<span class='ident'>search</span>(<span class='string'>&quot;GLOBAL-INDEX&quot;</span>, <span class='string'>&quot;diffbot&quot;</span>)</pre>
+</div><h4 id='method.search_with_options' class='method'><code>fn <a href='#method.search_with_options' class='fnname'>search_with_options</a>&lt;S: <a class='trait' href='https://doc.rust-lang.org/nightly/collections/string/trait.ToString.html' title='collections::string::ToString'>ToString</a>&gt;(&amp;self, col: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, query: &amp;<a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, options: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(S, S)</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='../diffbot/type.DiffbotResult.html' title='diffbot::DiffbotResult'>DiffbotResult</a></code></h4>
+<div class='docblock'><p>Run a search in a diffbot collection.</p>
+
+<p>Use <code>col</code> = <code>GLOBAL-INDEX</code> for the global search collection.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "diffbot";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>
