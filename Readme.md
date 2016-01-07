@@ -1,5 +1,8 @@
 # Diffbot API client for Rust
 
+[![Build Status](https://travis-ci.org/diffbot/diffbot-rust-client.svg?branch=master)](https://travis-ci.org/diffbot/diffbot-rust-client)
+[![crates.io](http://meritbadge.herokuapp.com/diffbot)](https://crates.io/crates/diffbot)
+
 This library allows you to access the [Diffbot API](https://www.diffbot.com)
 from your rust application.
 You still need a diffbot token (check their [trial](https://www.diffbot.com/plans/trial)).
