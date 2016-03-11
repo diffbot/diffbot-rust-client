@@ -46,6 +46,25 @@ fn main() {
 }
 ```
 
+
+```rust
+extern crate diffbot;
+use diffbot::*;
+
+fn main() {
+	let client = Diffbot::v3("insert_your_token_here");
+	match client.search("GLOBAL-INDEX", "type:article diffbot") {
+        Ok(result) =>
+            println!("{:?}", result),
+        Err(Error::Api(code, msg)) =>
+            println!("API returned error {}: {}", code, msg),
+        Err(err) =>
+            println!("Other error: {:?}", err),
+	};
+}
+
+```
+
 ## License
 
 This library is under the MIT license. You can probably use it in your commercial application without complication.
