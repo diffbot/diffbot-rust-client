@@ -25,8 +25,8 @@ extern crate url;
 extern crate hyper;
 extern crate rustc_serialize;
 
-use hyper::header::ContentType;
-use hyper::mime::{Mime, TopLevel, SubLevel};
+use hyper::header::{ContentType, UserAgent};
+use hyper::mime::{Mime, SubLevel, TopLevel};
 
 use std::error::{self, Error as StdError};
 use std::io;
@@ -34,6 +34,10 @@ use std::fmt;
 
 
 use rustc_serialize::json;
+
+pub fn user_agent() -> UserAgent {
+    UserAgent("diffbot/rust".to_owned())
+}
 
 /// Diffbot API client.
 ///
@@ -203,14 +207,12 @@ impl Diffbot {
     /// # );
     /// # }
     /// ```
-    pub fn call_with_options<S: ToString>(&self,
-                                          api: API,
-                                          target_url: &str,
+    pub fn call_with_options<S: ToString>(&self, api: API, target_url: &str,
                                           options: &[(S, S)])
                                           -> DiffbotResult {
         let url = self.prepare_url(api, target_url, options);
 
-        let builder = self.client.get(url);
+        let builder = self.client.get(url).header(user_agent());
         Diffbot::process_request(builder)
     }
 
@@ -236,7 +238,8 @@ impl Diffbot {
     /// # } );
     /// # }
     /// ```
-    pub fn post_body(&self, api: API, target_url: &str, body: &[u8]) -> DiffbotResult {
+    pub fn post_body(&self, api: API, target_url: &str, body: &[u8])
+                     -> DiffbotResult {
         self.post_body_with_options::<String>(api, target_url, body, &[])
     }
 
@@ -246,16 +249,20 @@ impl Diffbot {
     ///
     /// `target_url` here is the URL the page would have.
     /// It doesn't have to be accessible, but will be used when resolving links.
-    pub fn post_body_with_options<S: ToString>(&self,
-                                               api: API,
-                                               target_url: &str,
-                                               body: &[u8],
+    pub fn post_body_with_options<S: ToString>(&self, api: API,
+                                               target_url: &str, body: &[u8],
                                                options: &[(S, S)])
                                                -> DiffbotResult {
         let url = self.prepare_url(api, target_url, options);
 
-        let header = ContentType(Mime(TopLevel::Text, SubLevel::Html, vec![]));
-        let builder = self.client.post(url).body(body).header(header);
+        let content_type = ContentType(Mime(TopLevel::Text,
+                                            SubLevel::Html,
+                                            vec![]));
+        let builder = self.client
+                          .post(url)
+                          .body(body)
+                          .header(content_type)
+                          .header(user_agent());
         Diffbot::process_request(builder)
     }
 
@@ -282,14 +289,12 @@ impl Diffbot {
     /// Run a search in a diffbot collection.
     ///
     /// Use `col` = `GLOBAL-INDEX` for the global search collection.
-    pub fn search_with_options<S: ToString>(&self,
-                                            col: &str,
-                                            query: &str,
+    pub fn search_with_options<S: ToString>(&self, col: &str, query: &str,
                                             options: &[(S, S)])
                                             -> DiffbotResult {
         let url = self.prepare_search_url(col, query, options);
 
-        let builder = self.client.get(url);
+        let builder = self.client.get(url).header(user_agent());
         Diffbot::process_request(builder)
     }
 
@@ -315,9 +320,7 @@ impl Diffbot {
         Ok(json_result)
     }
 
-    fn prepare_search_url<S: ToString>(&self,
-                                       col: &str,
-                                       query: &str,
+    fn prepare_search_url<S: ToString>(&self, col: &str, query: &str,
                                        options: &[(S, S)])
                                        -> hyper::Url {
         let mut params = Vec::<(String, String)>::new();
@@ -330,16 +333,15 @@ impl Diffbot {
         }
 
         // We control the URL, it should always be valid.
-        let mut url = hyper::Url::parse("https://diffbot.com/api/search").unwrap();
+        let mut url = hyper::Url::parse("https://diffbot.com/api/search")
+                          .unwrap();
         url.set_query_from_pairs(&params);
 
         url
     }
 
     // Returns the diffbot URL for the given call
-    fn prepare_url<S: ToString>(&self,
-                                api: API,
-                                target_url: &str,
+    fn prepare_url<S: ToString>(&self, api: API, target_url: &str,
                                 options: &[(S, S)])
                                 -> hyper::Url {
 
@@ -368,9 +370,10 @@ fn test_search() {
 #[test]
 fn test_search_with_options() {
     let diffbot = Diffbot::v3("insert_your_token_here");
-    println!("{:?}", diffbot.search_with_options("GLOBAL-INDEX",
-                                                 "site:techcrunch.com sortby:date",
-                                                 &[("num", "2")]));
+    println!("{:?}",
+             diffbot.search_with_options("GLOBAL-INDEX",
+                                         "site:techcrunch.com sortby:date",
+                                         &[("num", "2")]));
 }
 
 #[test]
@@ -384,9 +387,10 @@ fn test_call() {
 fn test_call_with_options() {
     // Use `cargo test -- --nocapture` to see the output
     let diffbot = Diffbot::v3("insert_your_token_here");
-    println!("{:?}", diffbot.call_with_options(API::Analyze,
-                                               "http://diffbot.com",
-                                               &[("fields", "links,meta")]));
+    println!("{:?}",
+             diffbot.call_with_options(API::Analyze,
+                                       "http://diffbot.com",
+                                       &[("fields", "links,meta")]));
 }
 
 #[test]
