@@ -1,5 +1,6 @@
 #![cfg_attr(feature="clippy", feature(plugin))]
 #![cfg_attr(feature="clippy", plugin(clippy))]
+#![deny(missing_docs)]
 
 //! This library provides an API client for [Diffbot](https://www.diffbot.com)
 //!
