@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/gyscos/.multirust/toolchains/stable/cargo/registry/src/github.com-0a35038f75765ae4/serde-0.6.7/src/de/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/gyscos/.cargo/registry/src/github.com-88ac128001ac3a9a/serde-0.6.15/src/de/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
 
     
     
@@ -870,6 +872,16 @@
 <span id="828">828</span>
 <span id="829">829</span>
 <span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Generic deserialization framework.</span>
 
@@ -1274,6 +1286,16 @@
         <span class='kw'>where</span> <span class='ident'>V</span>: <span class='ident'>Visitor</span>,
     {
         <span class='self'>self</span>.<span class='ident'>visit_seq</span>(<span class='ident'>visitor</span>)
+    }
+
+    <span class='doccomment'>/// This method hints that the `Deserialize` type is expecting some sort of struct key mapping.</span>
+    <span class='doccomment'>/// This allows deserializers to choose between &amp;str, usize, or &amp;[u8] to properly deserialize a</span>
+    <span class='doccomment'>/// struct key.</span>
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>visit_struct_field</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>visitor</span>: <span class='ident'>V</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>V</span>::<span class='ident'>Value</span>, <span class='ident'>Self</span>::<span class='ident'>Error</span><span class='op'>&gt;</span>
+        <span class='kw'>where</span> <span class='ident'>V</span>: <span class='ident'>Visitor</span>,
+    {
+        <span class='self'>self</span>.<span class='ident'>visit</span>(<span class='ident'>visitor</span>)
     }
 
     <span class='doccomment'>/// Specify a format string for the deserializer.</span>
@@ -1745,7 +1767,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -1761,6 +1783,6 @@
     <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     
-    <script async src="../../../search-index.js"></script>
+    <script defer src="../../../search-index.js"></script>
 </body>
 </html>

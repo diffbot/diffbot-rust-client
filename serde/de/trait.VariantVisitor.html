@@ -9,7 +9,9 @@
 
     <title>serde::de::VariantVisitor - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -42,24 +44,24 @@
 
     <section id='main' class="content trait">
 <h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>serde</a>::<wbr><a href='index.html'>de</a>::<wbr><a class='trait' href=''>VariantVisitor</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-5852' class='srclink' href='../../src/serde/de/mod.rs.html#754-794' title='goto source code'>[src]</a></span></h1>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-5863' class='srclink' href='../../src/serde/de/mod.rs.html#764-804' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait VariantVisitor {
-    type Error: <a class='trait' href='../../serde/de/trait.Error.html' title='serde::de::Error'>Error</a>;
+    type <a href='#associatedtype.Error' class='type'>Error</a>: <a class='trait' href='../../serde/de/trait.Error.html' title='serde::de::Error'>Error</a>;
     fn <a href='#tymethod.visit_variant' class='fnname'>visit_variant</a>&lt;V&gt;(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Deserialize.html' title='serde::de::Deserialize'>Deserialize</a></span>;
 
-    fn <a href='#method.visit_unit' class='fnname'>visit_unit</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; { ... }
+    fn <a href='#method.visit_unit' class='fnname'>visit_unit</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; { ... }
     fn <a href='#method.visit_newtype' class='fnname'>visit_newtype</a>&lt;T&gt;(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;T, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where T: <a class='trait' href='../../serde/de/trait.Deserialize.html' title='serde::de::Deserialize'>Deserialize</a></span> { ... }
-    fn <a href='#method.visit_tuple' class='fnname'>visit_tuple</a>&lt;V&gt;(&amp;mut self, _len: <a href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span> { ... }
-    fn <a href='#method.visit_struct' class='fnname'>visit_struct</a>&lt;V&gt;(&amp;mut self, _fields: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'static [</a>&amp;'static <a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span> { ... }
+    fn <a href='#method.visit_tuple' class='fnname'>visit_tuple</a>&lt;V&gt;(&amp;mut self, _len: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span> { ... }
+    fn <a href='#method.visit_struct' class='fnname'>visit_struct</a>&lt;V&gt;(&amp;mut self, _fields: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'static [</a>&amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span> { ... }
 }</pre><div class='docblock'><p><code>VariantVisitor</code> is a visitor that is created by the <code>Deserializer</code> and passed to the
 <code>Deserialize</code> in order to deserialize a specific enum variant.</p>
 </div>
             <h2 id='associated-types'>Associated Types</h2>
             <div class='methods'>
-        <h3 id='associatedtype.Error' class='method stab '><code>type Error: <a class='trait' href='../../serde/de/trait.Error.html' title='serde::de::Error'>Error</a></code></h3><div class='docblock'><p>The error type that can be returned if some error occurs during deserialization.</p>
+        <h3 id='associatedtype.Error' class='method stab '><code>type <a href='#associatedtype.Error' class='type'>Error</a>: <a class='trait' href='../../serde/de/trait.Error.html' title='serde::de::Error'>Error</a></code></h3><div class='docblock'><p>The error type that can be returned if some error occurs during deserialization.</p>
 </div></div>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
@@ -67,11 +69,11 @@
 </div></div>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>
-        <h3 id='method.visit_unit' class='method stab '><code>fn <a href='#method.visit_unit' class='fnname'>visit_unit</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt;</code></h3><div class='docblock'><p><code>visit_unit</code> is called when deserializing a variant with no values.</p>
+        <h3 id='method.visit_unit' class='method stab '><code>fn <a href='#method.visit_unit' class='fnname'>visit_unit</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt;</code></h3><div class='docblock'><p><code>visit_unit</code> is called when deserializing a variant with no values.</p>
 </div><h3 id='method.visit_newtype' class='method stab '><code>fn <a href='#method.visit_newtype' class='fnname'>visit_newtype</a>&lt;T&gt;(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;T, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where T: <a class='trait' href='../../serde/de/trait.Deserialize.html' title='serde::de::Deserialize'>Deserialize</a></span></code></h3><div class='docblock'><p><code>visit_newtype</code> is called when deserializing a variant with a single value. By default this
 uses the <code>visit_tuple</code> method to deserialize the value.</p>
-</div><h3 id='method.visit_tuple' class='method stab '><code>fn <a href='#method.visit_tuple' class='fnname'>visit_tuple</a>&lt;V&gt;(&amp;mut self, _len: <a href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span></code></h3><div class='docblock'><p><code>visit_tuple</code> is called when deserializing a tuple-like variant.</p>
-</div><h3 id='method.visit_struct' class='method stab '><code>fn <a href='#method.visit_struct' class='fnname'>visit_struct</a>&lt;V&gt;(&amp;mut self, _fields: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'static [</a>&amp;'static <a href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span></code></h3><div class='docblock'><p><code>visit_struct</code> is called when deserializing a struct-like variant.</p>
+</div><h3 id='method.visit_tuple' class='method stab '><code>fn <a href='#method.visit_tuple' class='fnname'>visit_tuple</a>&lt;V&gt;(&amp;mut self, _len: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span></code></h3><div class='docblock'><p><code>visit_tuple</code> is called when deserializing a tuple-like variant.</p>
+</div><h3 id='method.visit_struct' class='method stab '><code>fn <a href='#method.visit_struct' class='fnname'>visit_struct</a>&lt;V&gt;(&amp;mut self, _fields: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'static [</a>&amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, _visitor: V) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;V::Value, Self::<a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>Error</a>&gt; <span class='where'>where V: <a class='trait' href='../../serde/de/trait.Visitor.html' title='serde::de::Visitor'>Visitor</a></span></code></h3><div class='docblock'><p><code>visit_struct</code> is called when deserializing a struct-like variant.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
@@ -79,8 +81,8 @@ uses the <code>visit_tuple</code> method to deserialize the value.</p>
 <li><code>impl&lt;'a&gt; <a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>VariantVisitor</a> for <a class='struct' href='../../serde/de/value/struct.StringDeserializer.html' title='serde::de::value::StringDeserializer'>StringDeserializer</a></code></li>
 <li><code>impl&lt;'a, T&gt; <a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>VariantVisitor</a> for &amp;'a mut T <span class='where'>where T: <a class='trait' href='../../serde/de/trait.VariantVisitor.html' title='serde::de::VariantVisitor'>VariantVisitor</a></span></code></li>
 </ul><script type="text/javascript" async
-                              src="../../implementors/serde/de/trait.VariantVisitor.js">
-                      </script></section>
+                         src="../../implementors/serde/de/trait.VariantVisitor.js">
+                 </script></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -123,7 +125,7 @@ uses the <code>visit_tuple</code> method to deserialize the value.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -139,6 +141,6 @@ uses the <code>visit_tuple</code> method to deserialize the value.</p>
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

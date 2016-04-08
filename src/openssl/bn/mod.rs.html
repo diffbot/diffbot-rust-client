@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/gyscos/.multirust/toolchains/stable/cargo/registry/src/github.com-0a35038f75765ae4/openssl-0.7.4/src/bn/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/gyscos/.cargo/registry/src/github.com-88ac128001ac3a9a/openssl-0.7.8/src/bn/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
 
     
     
@@ -697,11 +699,28 @@
 <span id="655">655</span>
 <span id="656">656</span>
 <span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>libc</span>::{<span class='ident'>c_int</span>, <span class='ident'>c_ulong</span>, <span class='ident'>c_void</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ffi</span>::{<span class='ident'>CStr</span>, <span class='ident'>CString</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>fmt</span>, <span class='ident'>ptr</span>};
+<span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>fmt</span>, <span class='ident'>ptr</span>, <span class='ident'>mem</span>};
 
 <span class='kw'>use</span> <span class='ident'>ffi</span>;
 <span class='kw'>use</span> <span class='ident'>ssl</span>::<span class='ident'>error</span>::<span class='ident'>SslError</span>;
@@ -800,6 +819,18 @@
             <span class='macro'>try_ssl</span><span class='macro'>!</span>(<span class='ident'>ffi</span>::<span class='ident'>BN_hex2bn</span>(<span class='ident'>v</span>.<span class='ident'>raw_ptr</span>(), <span class='ident'>c_str</span>.<span class='ident'>as_ptr</span>() <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> _));
             <span class='prelude-val'>Ok</span>(<span class='ident'>v</span>)
         })
+    }
+
+    <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>new_from_ffi</span>(<span class='ident'>orig</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>ffi</span>::<span class='ident'>BIGNUM</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>BigNum</span>, <span class='ident'>SslError</span><span class='op'>&gt;</span> {
+        <span class='kw'>if</span> <span class='ident'>orig</span>.<span class='ident'>is_null</span>() {
+            <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Null Pointer was supplied to BigNum::new_from_ffi&quot;</span>);
+        }
+        <span class='kw'>let</span> <span class='ident'>r</span> <span class='op'>=</span> <span class='ident'>ffi</span>::<span class='ident'>BN_dup</span>(<span class='ident'>orig</span>);
+        <span class='kw'>if</span> <span class='ident'>r</span>.<span class='ident'>is_null</span>() {
+            <span class='prelude-val'>Err</span>(<span class='ident'>SslError</span>::<span class='ident'>get</span>())
+        } <span class='kw'>else</span> {
+            <span class='prelude-val'>Ok</span>(<span class='ident'>BigNum</span>(<span class='ident'>r</span>))
+        }
     }
 
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_from_slice</span>(<span class='ident'>n</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>u8</span>]) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>BigNum</span>, <span class='ident'>SslError</span><span class='op'>&gt;</span> {
@@ -1161,6 +1192,11 @@
         <span class='ident'>n</span>
     }
 
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_raw</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>ffi</span>::<span class='ident'>BIGNUM</span> {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>me</span> <span class='op'>=</span> <span class='self'>self</span>;
+        <span class='ident'>mem</span>::<span class='ident'>replace</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>me</span>.<span class='number'>0</span>, <span class='ident'>ptr</span>::<span class='ident'>null_mut</span>())
+    }
+
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>to_vec</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>size</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>num_bytes</span>() <span class='kw'>as</span> <span class='ident'>usize</span>;
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>v</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>size</span>);
@@ -1399,7 +1435,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -1415,6 +1451,6 @@
     <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     
-    <script async src="../../../search-index.js"></script>
+    <script defer src="../../../search-index.js"></script>
 </body>
 </html>

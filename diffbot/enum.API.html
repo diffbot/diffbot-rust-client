@@ -9,7 +9,9 @@
 
     <title>diffbot::API - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
+    
 
     
     
@@ -42,10 +44,10 @@
 
     <section id='main' class="content enum">
 <h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>diffbot</a>::<wbr><a class='enum' href=''>API</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-17' class='srclink' href='../src/diffbot/lib.rs.html#61-74' title='goto source code'>[src]</a></span></h1>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-14' class='srclink' href='../src/diffbot/src/lib.rs.html#49-64' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum API {
     Analyze,
     Article,
@@ -53,17 +55,19 @@
     Discussion,
     Image,
     Video,
+    Custom(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>),
 }</pre><div class='docblock'><p>One of the possible diffbot API.</p>
 
 <p>See <a href="https://www.diffbot.com/dev/docs/">the diffbot documentation</a>.</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.Analyze'><code>Analyze</code></td><td><div class='docblock'><p>The analyze API automatically detects the page type.</p>
-</div></td></tr><tr><td id='variant.Article'><code>Article</code></td><td><div class='docblock'><p>The article API for news article.</p>
-</div></td></tr><tr><td id='variant.Product'><code>Product</code></td><td><div class='docblock'><p>The product API for products in online shops.</p>
-</div></td></tr><tr><td id='variant.Discussion'><code>Discussion</code></td><td><div class='docblock'><p>The discussion API for forums.</p>
-</div></td></tr><tr><td id='variant.Image'><code>Image</code></td><td><div class='docblock'><p>The image API for image-central pages.</p>
-</div></td></tr><tr><td id='variant.Video'><code>Video</code></td><td><div class='docblock'><p>The video API for video pages (youtube, ...).</p>
-</div></td></tr></table></section>
+<table class='variants_table'><tr><td id='variant.Analyze'><code>Analyze</code></td><td><div class='docblock'><p>The analyze API automatically detects the page type.</p>
+</div></td><td></td></tr><tr><td id='variant.Article'><code>Article</code></td><td><div class='docblock'><p>The article API for news article.</p>
+</div></td><td></td></tr><tr><td id='variant.Product'><code>Product</code></td><td><div class='docblock'><p>The product API for products in online shops.</p>
+</div></td><td></td></tr><tr><td id='variant.Discussion'><code>Discussion</code></td><td><div class='docblock'><p>The discussion API for forums.</p>
+</div></td><td></td></tr><tr><td id='variant.Image'><code>Image</code></td><td><div class='docblock'><p>The image API for image-central pages.</p>
+</div></td><td></td></tr><tr><td id='variant.Video'><code>Video</code></td><td><div class='docblock'><p>The video API for video pages (youtube, ...).</p>
+</div></td><td></td></tr><tr><td id='variant.Custom'><code>Custom</code></td><td><div class='docblock'><p>Custom-built API with a specific name</p>
+</div></td><td></td></tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -106,7 +110,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -122,6 +126,6 @@
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>
