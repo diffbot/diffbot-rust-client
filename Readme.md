@@ -8,7 +8,7 @@ from your rust application.
 You still need a diffbot token (check their [trial](https://www.diffbot.com/plans/trial)).
 
 It returns a Json object from [rustc_serialize](https://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/index.html),
-which is basically a [BTreeMap](https://doc.rust-lang.org/nightly/collections/struct.BTreeMap.html).
+which is basically a [BTreeMap](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html).
 
 ## [Documentation](http://diffbot.github.io/diffbot-rust-client/diffbot/index.html)
 
