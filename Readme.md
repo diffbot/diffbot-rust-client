@@ -18,7 +18,7 @@ Add to your `Cargo.toml` dependencies:
 
 ```
 [dependencies]
-diffbot = "0.1"
+diffbot = "0.2"
 ```
 
 And to your main source file:
