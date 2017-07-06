@@ -1,5 +1,3 @@
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
 #![deny(missing_docs)]
 
 //! This library provides an API client for [Diffbot](https://www.diffbot.com)
@@ -26,18 +24,16 @@
 //! ```
 
 extern crate url;
-extern crate hyper;
-extern crate rustc_serialize;
+extern crate reqwest;
+extern crate serde;
+extern crate serde_json;
 
-use hyper::header::{ContentType, UserAgent};
-use hyper::mime::{Mime, SubLevel, TopLevel};
+use reqwest::header::{ContentType, UserAgent};
+use reqwest::mime::{Mime, TopLevel, SubLevel};
 
 use std::error::{self, Error as StdError};
 use std::io;
 use std::fmt;
-
-
-use rustc_serialize::json;
 
 fn user_agent() -> UserAgent {
     UserAgent("diffbot/rust".to_owned())
@@ -80,7 +76,7 @@ impl API {
         get_api_url_string(self.get_str(), version)
     }
 
-    fn get_url(&self, version: u8) -> hyper::Url {
+    fn get_url(&self, version: u8) -> reqwest::Url {
         get_api_url(self.get_str(), version)
     }
 }
@@ -89,8 +85,8 @@ fn get_api_url_string(api: &str, version: u8) -> String {
     format!("https://api.diffbot.com/v{}/{}", version, api)
 }
 
-fn get_api_url(api: &str, version: u8) -> hyper::Url {
-    hyper::Url::parse(&get_api_url_string(api, version)).unwrap()
+fn get_api_url(api: &str, version: u8) -> reqwest::Url {
+    reqwest::Url::parse(&get_api_url_string(api, version)).unwrap()
 }
 
 
@@ -102,25 +98,22 @@ pub enum Error {
     /// The API returned an error.
     Api(u32, String),
     /// An error occured when decoding JSON from the API.
-    Json,
+    Json(serde_json::error::Error),
     /// An error occured with the network.
     Io(io::Error),
-    // TODO: don't expose hyper
+    // TODO: don't expose reqwest
     /// An HTTP error occured with the webserver.
-    Http(hyper::Error),
+    Http(reqwest::Error),
 }
 
-impl From<json::ParserError> for Error {
-    fn from(err: json::ParserError) -> Self {
-        match err {
-            json::ParserError::SyntaxError(_, _, _) => Error::Json,
-            json::ParserError::IoError(err) => Error::Io(err),
-        }
+impl From<serde_json::error::Error> for Error {
+    fn from(err: serde_json::error::Error) -> Self {
+        Error::Json(err)
     }
 }
 
-impl From<hyper::Error> for Error {
-    fn from(err: hyper::Error) -> Self {
+impl From<reqwest::Error> for Error {
+    fn from(err: reqwest::Error) -> Self {
         Error::Http(err)
     }
 }
@@ -129,7 +122,7 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
             Error::Api(_, ref msg) => msg,
-            Error::Json => "invalid JSON",
+            Error::Json(ref err) => err.description(),
             Error::Io(ref err) => err.description(),
             Error::Http(ref err) => err.description(),
         }
@@ -137,7 +130,8 @@ impl error::Error for Error {
 
     fn cause(&self) -> Option<&error::Error> {
         match *self {
-            Error::Api(_, _) | Error::Json => None,
+            Error::Api(_, _) => None,
+            Error::Json(ref err) => Some(err),
             Error::Io(ref err) => Some(err),
             Error::Http(ref err) => Some(err),
         }
@@ -152,7 +146,7 @@ impl fmt::Display for Error {
 
 
 /// Result from a call.
-pub type DiffbotResult = Result<json::Object, Error>;
+pub type DiffbotResult = Result<serde_json::map::Map<String, serde_json::Value>, Error>;
 
 /// Diffbot API client.
 ///
@@ -171,7 +165,7 @@ pub struct Diffbot {
     token: String,
     version: u8,
 
-    client: hyper::Client,
+    client: reqwest::Client,
 }
 
 impl Diffbot {
@@ -182,7 +176,7 @@ impl Diffbot {
         Diffbot {
             token: token.to_string(),
             version: version,
-            client: hyper::Client::new(),
+            client: reqwest::Client::new().unwrap(),
         }
     }
 
@@ -241,7 +235,7 @@ impl Diffbot {
     /// List existing crawls.
     pub fn list_crawls(&self) -> DiffbotResult {
         let mut url = self.get_api_url("crawl");
-        url.set_query_from_pairs(vec![("token", &self.token)]);
+        url.query_pairs_mut().append_pair("token", &self.token);
         let builder = self.client.get(url).header(user_agent());
         Diffbot::process_request(builder)
     }
@@ -251,13 +245,15 @@ impl Diffbot {
                                     main_options: Vec<(&str, &str)>,
                                     extra_options: &[(S, S)])
                                     -> DiffbotResult {
-        let mut body = url::form_urlencoded::serialize(main_options);
-        body.push('&');
-        body.push_str(&url::form_urlencoded::serialize(extra_options));
+
+        let mut serializer = url::form_urlencoded::Serializer::new(String::new());
+        serializer.extend_pairs(main_options);
+        serializer.extend_pairs(extra_options);
+        let body = serializer.finish();
 
         let url = self.get_api_url(api);
 
-        let content_type = ContentType(Mime(TopLevel::Application,
+        let content_type = reqwest::header::ContentType(Mime(TopLevel::Application,
                                             SubLevel::WwwFormUrlEncoded,
                                             vec![]));
         let builder = self.client
@@ -350,24 +346,24 @@ impl Diffbot {
         Diffbot::process_request(builder)
     }
 
-    fn get_api_url(&self, api: &str) -> hyper::Url {
+    fn get_api_url(&self, api: &str) -> reqwest::Url {
         get_api_url(api, self.version)
     }
 
     // Process a request and analyze the result
-    fn process_request(builder: hyper::client::RequestBuilder) -> DiffbotResult {
+    fn process_request(builder: reqwest::RequestBuilder) -> DiffbotResult {
         let mut result = try!(builder.send());
 
-        let json_result = match try!(json::Json::from_reader(&mut result)) {
-            json::Json::Object(obj) => obj,
-            _ => return Err(Error::Json),
+        let json_result = match try!(serde_json::from_reader(&mut result)) {
+            serde_json::Value::Object(obj) => obj,
+            _ => return Err(Error::Api(0, "Invalid response".to_string())),
         };
 
         if json_result.contains_key("error") {
             let error_code = json_result.get("errorCode")
                                         .and_then(|c| c.as_u64())
                                         .unwrap_or(0u64);
-            let error = json_result["error"].as_string().unwrap_or("");
+            let error = json_result["error"].as_str().unwrap_or("");
             return Err(Error::Api(error_code as u32, error.to_string()));
         }
 
@@ -376,7 +372,7 @@ impl Diffbot {
 
     fn prepare_search_url<S: ToString>(&self, col: &str, query: &str,
                                        options: &[(S, S)])
-                                       -> hyper::Url {
+                                       -> reqwest::Url {
         let mut params = Vec::<(String, String)>::new();
         params.push(("token".to_string(), self.token.clone()));
         params.push(("col".to_string(), col.to_string()));
@@ -387,7 +383,7 @@ impl Diffbot {
 
         // We control the URL, it should always be valid.
         let mut url = self.get_api_url("search");
-        url.set_query_from_pairs(&params);
+        url.query_pairs_mut().extend_pairs(&params);
 
         url
     }
@@ -395,7 +391,7 @@ impl Diffbot {
     // Returns the diffbot URL for the given call
     fn prepare_url<S: ToString>(&self, api: API, target_url: &str,
                                 options: &[(S, S)])
-                                -> hyper::Url {
+                                -> reqwest::Url {
 
         let mut params = Vec::<(String, String)>::new();
         params.push(("token".to_string(), self.token.clone()));
@@ -406,7 +402,7 @@ impl Diffbot {
 
         // We control the URL, it should always be valid.
         let mut url = api.get_url(self.version);
-        url.set_query_from_pairs(&params);
+        url.query_pairs_mut().extend_pairs(&params);
 
         url
     }
@@ -477,7 +473,7 @@ impl Diffbot {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```no_run
     /// # extern crate diffbot;
     /// # use diffbot::*;
     /// # fn main() {

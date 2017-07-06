@@ -7,8 +7,7 @@ This library allows you to access the [Diffbot API](https://www.diffbot.com)
 from your rust application.
 You still need a diffbot token (check their [trial](https://www.diffbot.com/plans/trial)).
 
-It returns a Json object from [rustc_serialize](https://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/index.html),
-which is basically a [BTreeMap](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html).
+It returns a Json object from [serde_json](https://docs.rs/serde_json/1.0.2/serde_json/map/struct.Map.html).
 
 ## [Documentation](http://diffbot.github.io/diffbot-rust-client/diffbot/index.html)
 
@@ -18,7 +17,7 @@ Add to your `Cargo.toml` dependencies:
 
 ```
 [dependencies]
-diffbot = "0.2"
+diffbot = "1.0"
 ```
 
 And to your main source file:
